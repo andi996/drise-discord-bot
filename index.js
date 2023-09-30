@@ -16,9 +16,10 @@ const client = new Client({
   ],
 });
 
+const port = process.env.PORT || 9001;
 //=============
-app.listen(3000, () => {
-  console.log("project sedang berjalan!");
+app.listen(port, () => {
+  console.log(`project sedang berjalan! di port ${port}`);
 });
 
 app.get("/", (req, res) => {
@@ -81,8 +82,6 @@ const voiceChannelMessages = {
 };
 
 client.on("voiceStateUpdate", (oldState, newState) => {
-  const user = newState.member.user;
-
   // Check if the user joined a voice channel
   if (!oldState.channel && newState.channel) {
     const voiceChannel = newState.channel;
