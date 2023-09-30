@@ -16,7 +16,7 @@ const client = new Client({
   ],
 });
 
-const port = process.env.PORT || 9001;
+const port = process.env.PORT;
 //=============
 app.listen(port, () => {
   console.log(`project sedang berjalan! di port ${port}`);
@@ -24,6 +24,10 @@ app.listen(port, () => {
 
 app.get("/", (req, res) => {
   res.send("hello world!");
+});
+
+app.post("/bot", (req, res) => {
+  res.send("ini adalah bot percobaan, created by Andri Setiawan!");
 });
 //=============
 
