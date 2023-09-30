@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits, SlashCommandBuilder } from "discord.js";
 import express from "express";
 
 // Load environment variables from .env file
@@ -12,6 +12,7 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildVoiceStates,
   ],
 });
 
@@ -27,22 +28,84 @@ app.get("/", (req, res) => {
 
 client.on("ready", (x) => {
   console.log(`bot ${x.user.tag} is ready!`);
+
+  const ping = new SlashCommandBuilder()
+    .setName("ping")
+    .setDescription("This is a ping command");
+
+  const hello = new SlashCommandBuilder()
+    .setName("hello")
+    .setDescription("This is a hello command");
+
+  client.application.commands.create(ping);
+  client.application.commands.create(hello);
+});
+
+client.on("interactionCreate", (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+  if (interaction.commandName === "ping") {
+    interaction.reply("pong!");
+  }
+
+  if (interaction.commandName === "hello") {
+    interaction.reply(`hello! i'am ${client.user.tag}`);
+  }
 });
 
 const prefix = "!";
 
-// client.on("messageCreate", (message) => {
-//   if (message.author.bot) return;
-//   if (!message.content.startsWith(prefix)) return;
-//   console.log("message", message);
-//   const commandBody = message.content.slice(prefix.length);
-//   const args = commandBody.split(" ");
-//   const command = args.shift().toLowerCase();
+client.on("messageCreate", (message) => {
+  if (message.author.bot) return;
+  if (!message.content.startsWith(prefix)) return;
 
-//   if (command === "ping") {
-//     message.reply(`Pong`);
-//   }
-// });
+  const commandBody = message.content.slice(prefix.length);
+  const args = commandBody.split(" ");
+  const command = args.shift().toLowerCase();
+
+  if (command === "ping") {
+    message.reply(`Pong`);
+  }
+
+  if (command === "haha") {
+    message.reply(`hehe`);
+  }
+});
+
+//===================== TRYING VOICE CHANNEL DETECTION =================
+// Add the following code to your existing bot code
+
+const voiceChannelMessages = {
+  "1157590949229248532": "Silahkan ketik '/play' untuk memainkan musik.",
+  "1152463899392749568":
+    "Silahkan ketik 'm!play `link`' untuk memainkan musik.",
+};
+
+client.on("voiceStateUpdate", (oldState, newState) => {
+  const user = newState.member.user;
+
+  // Check if the user joined a voice channel
+  if (!oldState.channel && newState.channel) {
+    const voiceChannel = newState.channel;
+
+    // Check if the user joined the specific voice channel you're interested in
+    if (voiceChannel && voiceChannel.id in voiceChannelMessages) {
+      const message = voiceChannelMessages[voiceChannel.id];
+      const textChannel = newState.guild.channels.cache.find(
+        (channel) => channel.name === voiceChannel.name
+      );
+
+      // Check if the voice channel became non-empty
+      if (voiceChannel.members.size === 1) {
+        // Check if the text channel exists
+        if (textChannel) {
+          textChannel.send(message);
+        }
+      }
+    }
+  }
+});
+
+//======================================================================
 
 //make sure this line is the last line
 client.login(process.env.CLIENT_TOKEN); //login bot using token
