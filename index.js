@@ -16,7 +16,7 @@ const client = new Client({
   ],
 });
 
-const port = process.env.PORT;
+const port = process.env.PORT || 9001;
 //=============
 app.listen(port, () => {
   console.log(`project sedang berjalan! di port ${port}`);
