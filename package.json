@@ -9,12 +9,12 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node index.js",
+    "dev": "nodemon index.js",
     "start": "node index.js"
   },
   "keywords": [],
   "author": "andri setiawan",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "axios": "^1.5.1",
     "discord.js": "^14.13.0",
@@ -22,6 +22,7 @@
     "express": "^4.18.2"
   },
   "devDependencies": {
-    "node": "^16.20.2"
+    "node": "^16.20.2",
+    "nodemon": "^3.0.1"
   }
 }

@@ -1,11 +1,7 @@
 import dotenv from "dotenv";
 import { Client, GatewayIntentBits, SlashCommandBuilder } from "discord.js";
-import express from "express";
 
-// Load environment variables from .env file
 dotenv.config();
-
-const app = express();
 
 const client = new Client({
   intents: [
@@ -16,34 +12,16 @@ const client = new Client({
   ],
 });
 
-const port = process.env.PORT || 9001;
-//=============
-app.listen(port, () => {
-  console.log(`project sedang berjalan! di port ${port}`);
-});
-
-app.get("/", (req, res) => {
-  res.send("hello world!");
-});
-
-app.get("/bot", (req, res) => {
-  res.send("ini adalah bot percobaan, created by Andri Setiawan!");
-});
-//=============
+const BOT_PREFIX = "!";
 
 client.on("ready", (x) => {
-  console.log(`bot ${x.user.tag} is ready!`);
+  console.log(`Our ${x.user.tag} is ready to use!`);
 
   const ping = new SlashCommandBuilder()
     .setName("ping")
     .setDescription("This is a ping command");
 
-  const hello = new SlashCommandBuilder()
-    .setName("hello")
-    .setDescription("This is a hello command");
-
   client.application.commands.create(ping);
-  client.application.commands.create(hello);
 });
 
 client.on("interactionCreate", (interaction) => {
@@ -51,19 +29,13 @@ client.on("interactionCreate", (interaction) => {
   if (interaction.commandName === "ping") {
     interaction.reply("pong!");
   }
-
-  if (interaction.commandName === "hello") {
-    interaction.reply(`hello! i'am ${client.user.tag}`);
-  }
 });
-
-const prefix = "!";
 
 client.on("messageCreate", (message) => {
   if (message.author.bot) return;
-  if (!message.content.startsWith(prefix)) return;
+  if (!message.content.startsWith(BOT_PREFIX)) return;
 
-  const commandBody = message.content.slice(prefix.length);
+  const commandBody = message.content.slice(BOT_PREFIX.length);
   const args = commandBody.split(" ");
   const command = args.shift().toLowerCase();
 
@@ -73,6 +45,14 @@ client.on("messageCreate", (message) => {
 
   if (command === "haha") {
     message.reply(`hehe`);
+  }
+
+  if (command === "name") {
+    message.reply(`My name is ${client.user.tag}`);
+  }
+
+  if (command === "author") {
+    message.reply(`My author is **Andri Setiawan**`);
   }
 });
 
