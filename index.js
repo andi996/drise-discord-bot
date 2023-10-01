@@ -92,3 +92,6 @@ client.on("voiceStateUpdate", (oldState, newState) => {
 
 //make sure this line is the last line
 client.login(process.env.CLIENT_TOKEN); //login bot using token
+
+
+export default client; // Assuming 'client' is your Discord bot client
